@@ -6,7 +6,7 @@ apt-get upgrade -y -q
 apt-get install -y -q tmux vim curl unzip
 
 # dependencies for vbox guest additions
-apt-get install -y -q linux-headers-$(uname -r) bzip2 build-essential
+apt-get install -y -q linux-headers-$(uname -r) build-essential dkms bzip2
 echo 'vagrant ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers.d/vagrant
 
 # install vbox guest additions

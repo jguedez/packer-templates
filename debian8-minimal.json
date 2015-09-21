@@ -162,14 +162,10 @@
         {
             "type": "shell",
             "only": ["virtualbox-vagrant"],
+            "execute_command": "echo 'vagrant' | sudo -S sh '{{ .Path }}'",
             "scripts": [
                 "scripts/vagrant_root_setup.sh"
-            ],
-            "override": {
-                "virtualbox-vagrant": {
-                    "execute_command": "echo 'vagrant' | sudo -S sh '{{ .Path }}'"
-                }
-            }
+            ]
         },
         {
             "type": "shell",
