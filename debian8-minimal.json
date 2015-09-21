@@ -1,0 +1,187 @@
+{
+    "description": "Debian 8.2 netinst minimal installation vagrant/virtualbox/vmware",
+    "min_packer_version": "0.8.6",
+    "variables": {
+        "ssh_name": "placeholder",
+        "ssh_pass": "placeholder",
+        "hostname": "placeholder",
+        "vm_memory": "256",
+        "vm_cpus": "1",
+        "vm_name": "debian8-minimal",
+        "vm_disk_size": "8000",
+        "http_directory" : "http",
+        "http_port" : "9001",
+        "iso_url": "isos/debian-8.2.0-amd64-netinst.iso",
+        "iso_checksum": "762eb3dfc22f85faf659001ebf270b4f",
+        "iso_checksum_type": "md5",
+        "ssh_wait_timeout": "20m",
+        "boot_wait": "4s"
+    },
+    "builders": [{
+        "name": "vmware",
+        "type": "vmware-iso",
+        "guest_os_type": "other3xlinux-64",
+        "boot_wait": "{{user `boot_wait`}}",
+
+        "disk_size" : "{{user `vm_disk_size`}}",
+
+        "iso_url": "{{user `iso_url`}}",
+        "iso_checksum": "{{user `iso_checksum`}}",
+        "iso_checksum_type": "{{user `iso_checksum_type`}}",
+
+        "vm_name": "{{user `vm_name`}}",
+        "output_directory": "{{user `vm_name`}}-vmware",
+
+        "http_directory" : "{{user `http_directory`}}",
+        "http_port_min" : "{{user `http_port`}}",
+        "http_port_max" : "{{user `http_port`}}",
+
+        "ssh_username": "{{user `ssh_name`}}",
+        "ssh_password": "{{user `ssh_pass`}}",
+        "ssh_wait_timeout": "{{user `ssh_wait_timeout`}}",
+
+        "shutdown_command": "echo {{user `ssh_pass`}} | sudo -S shutdown -P now",
+
+        "vmx_data": {
+            "memsize": "{{user `vm_memory`}}",
+            "numvcpus": "{{user `vm_cpus`}}",
+            "cpuid.coresPerSocket": "{{user `vm_cpus`}}"
+        },
+
+        "boot_command" : [
+            "<esc><wait>",
+            "install <wait>",
+            "preseed/url=http://{{ .HTTPIP }}:{{ .HTTPPort }}/preseed-netinst-placeholder.cfg <wait>",
+            "debian-installer=en_US <wait>",
+            "auto <wait>",
+            "locale=en_US <wait>",
+            "kbd-chooser/method=us <wait>",
+            "netcfg/get_hostname={{user `hostname`}} <wait>",
+            "netcfg/get_domain= <wait>",
+            "fb=false <wait>",
+            "debconf/frontend=noninteractive <wait>",
+            "console-setup/ask_detect=false <wait>",
+            "console-keymaps-at/keymap=us <wait>",
+            "keyboard-configuration/xkb-keymap=us <wait>",
+            "<enter><wait>"
+        ]
+    },
+    {
+        "name": "virtualbox-ova",
+        "type": "virtualbox-iso",
+        "format": "ova",
+        "guest_os_type": "Debian_64",
+        "guest_additions_mode": "disable",
+        "boot_wait": "{{user `boot_wait`}}",
+
+        "disk_size" : "{{user `vm_disk_size`}}",
+
+        "iso_url": "{{user `iso_url`}}",
+        "iso_checksum": "{{user `iso_checksum`}}",
+        "iso_checksum_type": "{{user `iso_checksum_type`}}",
+
+        "vboxmanage": [
+            ["modifyvm", "{{.Name}}", "--memory", "{{user `vm_memory`}}"],
+            ["modifyvm", "{{.Name}}", "--cpus", "{{user `vm_cpus`}}"]
+        ],
+
+        "http_directory" : "{{user `http_directory`}}",
+        "http_port_min" : "{{user `http_port`}}",
+        "http_port_max" : "{{user `http_port`}}",
+
+        "ssh_username": "{{user `ssh_name`}}",
+        "ssh_password": "{{user `ssh_pass`}}",
+        "ssh_wait_timeout": "{{user `ssh_wait_timeout`}}",
+
+        "shutdown_command": "echo {{user `ssh_pass`}} | sudo -S shutdown -P now",
+
+        "boot_command" : [
+            "<esc><wait>",
+            "install <wait>",
+            "preseed/url=http://{{ .HTTPIP }}:{{ .HTTPPort }}/preseed-netinst-placeholder.cfg <wait>",
+            "debian-installer=en_US <wait>",
+            "auto <wait>",
+            "locale=en_US <wait>",
+            "kbd-chooser/method=us <wait>",
+            "netcfg/get_hostname={{user `hostname`}} <wait>",
+            "netcfg/get_domain= <wait>",
+            "fb=false <wait>",
+            "debconf/frontend=noninteractive <wait>",
+            "console-setup/ask_detect=false <wait>",
+            "console-keymaps-at/keymap=us <wait>",
+            "keyboard-configuration/xkb-keymap=us <wait>",
+            "<enter><wait>"
+        ]
+    },
+    {
+        "name": "virtualbox-vagrant",
+        "type": "virtualbox-iso",
+        "guest_os_type": "Debian_64",
+        "boot_wait": "{{user `boot_wait`}}",
+
+        "disk_size" : "{{user `vm_disk_size`}}",
+
+        "iso_url": "{{user `iso_url`}}",
+        "iso_checksum": "{{user `iso_checksum`}}",
+        "iso_checksum_type": "{{user `iso_checksum_type`}}",
+
+        "vboxmanage": [
+            ["modifyvm", "{{.Name}}", "--memory", "{{user `vm_memory`}}"],
+            ["modifyvm", "{{.Name}}", "--cpus", "{{user `vm_cpus`}}"]
+        ],
+
+        "http_directory" : "{{user `http_directory`}}",
+        "http_port_min" : "{{user `http_port`}}",
+        "http_port_max" : "{{user `http_port`}}",
+
+        "ssh_username": "vagrant",
+        "ssh_password": "vagrant",
+        "ssh_wait_timeout": "{{user `ssh_wait_timeout`}}",
+
+        "shutdown_command": "echo {{user `ssh_pass`}} | sudo -S shutdown -P now",
+
+        "boot_command" : [
+            "<esc><wait>",
+            "install <wait>",
+            "preseed/url=http://{{ .HTTPIP }}:{{ .HTTPPort }}/preseed-netinst-vagrant.cfg <wait>",
+            "debian-installer=en_US <wait>",
+            "auto <wait>",
+            "locale=en_US <wait>",
+            "kbd-chooser/method=us <wait>",
+            "netcfg/get_hostname=vagrantbox <wait>",
+            "netcfg/get_domain= <wait>",
+            "fb=false <wait>",
+            "debconf/frontend=noninteractive <wait>",
+            "console-setup/ask_detect=false <wait>",
+            "console-keymaps-at/keymap=us <wait>",
+            "keyboard-configuration/xkb-keymap=us <wait>",
+            "<enter><wait>"
+        ]
+    }],
+    "provisioners": [
+        {
+            "type": "shell",
+            "only": ["virtualbox-vagrant"],
+            "scripts": [
+                "scripts/vagrant_root_setup.sh"
+            ],
+            "override": {
+                "virtualbox-vagrant": {
+                    "execute_command": "echo 'vagrant' | sudo -S sh '{{ .Path }}'"
+                }
+            }
+        },
+        {
+            "type": "shell",
+            "only": ["virtualbox-vagrant"],
+            "scripts": [
+                "scripts/vagrant_user_setup.sh"
+            ]
+        }
+    ],
+    "post-processors": [{
+        "type": "vagrant",
+        "only": ["virtualbox-vagrant"],
+        "output": "debian8-minimal.box"
+    }]
+}
